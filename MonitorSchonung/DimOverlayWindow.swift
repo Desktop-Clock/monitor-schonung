@@ -6,8 +6,7 @@ final class DimOverlayWindow: NSWindow {
             contentRect: screen.frame,
             styleMask: [.borderless],
             backing: .buffered,
-            defer: false,
-            screen: screen
+            defer: false
         )
         isOpaque = false
         backgroundColor = .black
