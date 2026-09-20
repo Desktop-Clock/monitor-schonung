@@ -1,0 +1,42 @@
+name: MonitorSchonung bauen
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: macos-latest
+    timeout-minutes: 20
+    steps:
+      - name: Projekt herunterladen
+        uses: actions/checkout@v4
+
+      - name: Apple-Silicon-App bauen
+        run: |
+          xcodebuild \
+            -project MonitorSchonung.xcodeproj \
+            -target MonitorSchonung \
+            -configuration Release \
+            -arch arm64 \
+            SYMROOT="$PWD/build/products" \
+            CODE_SIGNING_ALLOWED=NO \
+            build
+
+      - name: App lokal signieren und verpacken
+        run: |
+          APP="build/products/Release/MonitorSchonung.app"
+          test -d "$APP"
+          codesign --force --deep --sign - "$APP"
+          codesign --verify --deep --strict "$APP"
+          ditto -c -k --sequesterRsrc --keepParent "$APP" build/MonitorSchonung-Apple-Silicon.zip
+
+      - name: ZIP bereitstellen
+        uses: actions/upload-artifact@v4
+        with:
+          name: MonitorSchonung-Apple-Silicon
+          path: build/MonitorSchonung-Apple-Silicon.zip
+          if-no-files-found: error
+          retention-days: 30
