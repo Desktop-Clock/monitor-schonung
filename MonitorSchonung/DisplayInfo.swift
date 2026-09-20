@@ -23,7 +23,7 @@ struct DisplayInfo: Identifiable, Equatable {
             }
             let id = CGDirectDisplayID(number.uint32Value)
             guard let displayUUID = CGDisplayCreateUUIDFromDisplayID(id) else { return nil }
-            let uuid = CFUUIDCreateString(nil, displayUUID) as String
+            let uuid = CFUUIDCreateString(nil, displayUUID.takeRetainedValue()) as String
             return DisplayInfo(
                 id: id,
                 uuid: uuid,
