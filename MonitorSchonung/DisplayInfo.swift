@@ -17,7 +17,7 @@ struct DisplayInfo: Identifiable, Equatable {
     }
 
     static func connected() -> [DisplayInfo] {
-        NSScreen.screens.compactMap { screen in
+        NSScreen.screens.compactMap { screen -> DisplayInfo? in
             guard let number = screen.deviceDescription[NSDeviceDescriptionKey("NSScreenNumber")] as? NSNumber else {
                 return nil
             }
